@@ -1,0 +1,529 @@
+/* ================================================================
+   ADAS AEB 系统 — 样式表
+   ================================================================ */
+
+:root {
+    --bg-primary: #0f1119;
+    --bg-secondary: #1a1d2e;
+    --bg-card: #242840;
+    --border: #2e3350;
+    --text-primary: #e4e6f0;
+    --text-secondary: #9498b0;
+    --accent-blue: #3b82f6;
+    --accent-green: #22c55e;
+    --accent-yellow: #eab308;
+    --accent-red: #ef4444;
+    --accent-purple: #8b5cf6;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* ======== 布局 ======== */
+.app-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 12px 16px;
+}
+
+.top-bar {
+    text-align: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+}
+
+.top-bar h1 {
+    font-size: 1.6rem;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.top-bar .subtitle {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.main-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+/* ======== 面板 ======== */
+.left-panel, .right-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* ======== 视频区域 ======== */
+.video-section {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.section-header h2 {
+    font-size: 1rem;
+}
+
+.badge {
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    background: var(--accent-green);
+    color: #000;
+    font-weight: 600;
+}
+
+.badge.warning {
+    background: var(--accent-yellow);
+}
+
+.badge.danger {
+    background: var(--accent-red);
+    color: #fff;
+}
+
+.video-container {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: #000;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--border);
+    margin-bottom: 10px;
+}
+
+.video-placeholder {
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.video-placeholder .upload-icon {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.video-placeholder .hint {
+    font-size: 0.8rem;
+    margin-top: 6px;
+    color: #555;
+}
+
+/* ======== 车速设置 ======== */
+.speed-setter {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.85rem;
+}
+
+.speed-setter label {
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.speed-setter input {
+    width: 55px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--accent-green);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-align: center;
+    padding: 3px 4px;
+}
+
+.speed-setter input:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+}
+
+.speed-setter span {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+/* ======== 控制栏 ======== */
+.controls-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.btn-primary { background: var(--accent-blue); color: #fff; }
+.btn-primary:hover:not(:disabled) { background: #2563eb; }
+
+.btn-success { background: var(--accent-green); color: #000; }
+.btn-success:hover:not(:disabled) { background: #16a34a; }
+
+.btn-danger { background: var(--accent-red); color: #fff; }
+.btn-danger:hover:not(:disabled) { background: #dc2626; }
+
+.btn-warning { background: var(--accent-yellow); color: #000; }
+.btn-warning:hover:not(:disabled) { background: #ca8a04; }
+
+.btn-secondary {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+.btn-secondary:hover:not(:disabled) { background: var(--border); }
+
+/* ======== 视频时间线拖拽条 ======== */
+.timeline-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.time-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+    min-width: 42px;
+}
+
+.seek-slider {
+    flex: 1;
+    height: 6px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--border);
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+}
+
+.seek-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    cursor: pointer;
+}
+
+/* ======== 公式面板 ======== */
+.formula-box {
+    background: #1a1f30;
+    border: 1px solid var(--accent-purple);
+    border-radius: 8px;
+    padding: 12px 15px;
+    margin-bottom: 14px;
+}
+
+.formula-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--accent-purple);
+    margin-bottom: 8px;
+}
+
+.formula-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 4px 12px;
+}
+
+.formula-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+}
+
+.formula-label {
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.formula {
+    color: #e2e8f0;
+    font-family: 'Courier New', monospace;
+    background: #0f1520;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.formula sub {
+    font-size: 0.7rem;
+}
+
+/* ======== 进度条 ======== */
+.progress-bar {
+    width: 100%;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-top: 8px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--accent-blue);
+    transition: width 0.3s;
+}
+
+.progress-text {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-top: 4px;
+}
+
+/* ======== 仪表盘 ======== */
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.gauge-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 10px;
+    text-align: center;
+}
+
+.gauge-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.gauge-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.status-safe { color: var(--accent-green); }
+.status-warning { color: var(--accent-yellow); }
+.status-brake { color: var(--accent-red); }
+
+/* ======== 曲线卡片 ======== */
+.chart-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+}
+
+.chart-card h3, .chart-card h4 {
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+    color: var(--text-secondary);
+}
+
+.chart-card canvas {
+    width: 100% !important;
+    height: 140px !important;
+}
+
+/* ======== TTC 说明 ======== */
+.ttc-info {
+    background: #1a1f30;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+}
+
+.ttc-info strong {
+    color: var(--text-primary);
+}
+
+/* ======== 底部仿真面板 ======== */
+.sim-panel {
+    background: var(--bg-secondary);
+    border: 1px solid var(--accent-purple);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-top: 16px;
+}
+
+.sim-panel > h2 {
+    font-size: 1.05rem;
+    margin-bottom: 12px;
+    color: var(--accent-purple);
+}
+
+/* ======== 车辆动画 (视频区下方) ======== */
+
+.sim-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.param-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px 14px;
+}
+.param-item { display:flex; align-items:center; gap:6px; font-size:0.82rem; }
+.param-item label { color:var(--text-secondary); white-space:nowrap; }
+.param-item input[type=range] { width:80px; flex:0 0 auto; }
+.param-item span { color:var(--accent-blue); font-weight:600; min-width:60px; font-size:0.78rem; }
+
+.sim-buttons {
+    display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0;
+}
+.sim-buttons .btn.active {
+    box-shadow: 0 0 0 2px var(--accent-purple);
+    transform: scale(1.03);
+}
+
+.sim-summary {
+    background: #1a1f30; border: 1px solid var(--border);
+    border-radius: 6px; padding: 8px 14px; margin-bottom: 10px;
+    font-size: 0.85rem; color: var(--text-secondary);
+}
+.sim-summary strong { color: var(--accent-blue); font-size: 0.95rem; }
+
+.sim-input {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+}
+
+.sim-input input[type="range"] {
+    width: 100px;
+}
+
+.sim-charts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.chart-card.half canvas {
+    height: 120px !important;
+}
+
+.sim-result {
+    margin-top: 10px;
+    display: flex;
+    gap: 20px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.sim-result strong {
+    color: var(--accent-blue);
+    font-size: 1.1rem;
+}
+
+/* ======== 车辆动画 ======== */
+.car-animation {
+    background: #1a1a1a;
+    border-radius: 8px;
+    overflow: hidden;
+    padding: 10px;
+}
+
+.road {
+    position: relative;
+    height: 180px;
+    background: #333;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.lane-marker {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: repeating-linear-gradient(
+        to right,
+        #fff 0px, #fff 20px,
+        transparent 20px, transparent 40px
+    );
+}
+
+.ego-car, .target-car {
+    position: absolute;
+    bottom: 20px;
+    font-size: 2rem;
+    transition: left 0.1s linear;
+}
+
+.ego-car {
+    left: 15%;
+    transform: scaleX(-1);
+}
+
+.target-car {
+    left: 65%;
+}
+
+/* ======== 响应式 ======== */
+@media (max-width: 900px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+    .bottom-panel {
+        grid-template-columns: 1fr;
+    }
+    .dashboard {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

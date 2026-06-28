@@ -1,0 +1,33 @@
+# ADAS AEB 系统 — Python 依赖
+# 安装方式 (激活 conda 环境后):
+#   pip install -r requirements.txt
+#
+# 注意: torch/torchvision/ultralytics 可能已安装但版本不同，
+# 如需精确版本请取消下面注释
+
+# === 核心依赖 (必须) ===
+numpy>=1.26.0,<2.0
+opencv-python>=4.8.0
+matplotlib>=3.7.0
+scipy>=1.10.0
+
+# === YOLOv8 目标检测 ===
+torch>=2.0.0
+torchvision>=0.15.0
+ultralytics>=8.0.0
+
+# === Web 服务 ===
+fastapi>=0.100.0
+uvicorn>=0.22.0
+python-multipart>=0.0.5
+
+# === 数据处理与可视化 ===
+pandas>=2.0.0
+
+# === 可选: MATLAB Engine API ===
+# 需要从 MATLAB 安装目录手动安装:
+# cd "C:\Program Files\MATLAB\R20xxx\extern\engines\python"
+# python setup.py install
+
+# === 可选: Gradio (备选前端) ===
+# gradio>=4.0.0

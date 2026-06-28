@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADAS AEB 自动紧急制动系统</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- ======== 标题 ======== -->
+        <header class="top-bar">
+            <h1>ADAS AEB 自动紧急制动系统</h1>
+            <span class="subtitle">目标识别 + 碰撞风险评估 + 制动控制仿真</span>
+        </header>
+
+        <!-- ======== 主区域 ======== -->
+        <div class="main-content">
+            <!-- ===== 左侧: 视频 + 仪表盘 + 动画 ===== -->
+            <div class="left-panel">
+                <!-- 视频区域 -->
+                <div class="video-section">
+                    <div class="section-header">
+                        <h2>视频检测</h2>
+                        <span class="badge" id="statusBadge">就绪</span>
+                    </div>
+                    <div class="video-container" id="videoContainer">
+                        <img id="videoFrame" src="" alt="视频检测画面"
+                             style="display:none; width:100%; height:100%; object-fit:contain;">
+                        <div class="video-placeholder" id="videoPlaceholder">
+                            <div class="upload-icon">🎬</div>
+                            <p>上传视频文件开始检测</p>
+                            <p class="hint">支持 MP4 / AVI / MOV 格式</p>
+                        </div>
+                    </div>
+                    <!-- 控制栏 -->
+                    <div class="controls-bar">
+                        <label class="btn btn-primary" for="videoUpload">上传视频</label>
+                        <input type="file" id="videoUpload" accept="video/*" hidden>
+                        <div class="speed-setter">
+                            <label>自车速:</label>
+                            <input type="number" id="egoSpeed" value="60" min="10" max="150" step="5">
+                            <span>km/h</span>
+                        </div>
+                        <button class="btn btn-success" id="btnStart" disabled>▶ 开始</button>
+                        <button class="btn btn-warning" id="btnPause" disabled style="display:none;">⏸ 暂停</button>
+                        <button class="btn btn-danger" id="btnStop" disabled>⏹ 停止</button>
+                        <button class="btn btn-secondary" id="btnReset">🔄 重置</button>
+                    </div>
+                    <!-- 时间线 -->
+                    <div class="timeline-bar" id="timelineBar" style="display:none;">
+                        <span class="time-label" id="timeCurrent">0:00</span>
+                        <input type="range" id="seekSlider" min="0" max="100" value="0" step="1" class="seek-slider">
+                        <span class="time-label" id="timeTotal">0:00</span>
+                    </div>
+                    <!-- 进度条 -->
+                    <div class="progress-bar" id="progressBar" style="display:none;">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text" id="progressText"></div>
+                </div>
+
+                <!-- 仪表盘 -->
+                <div class="dashboard">
+                    <div class="gauge-card">
+                        <div class="gauge-label">TTC (秒) <span title="Time To Collision: D/v_rel. 值越小越危险">&#9432;</span></div>
+                        <div class="gauge-value" id="ttcValue">--</div>
+                    </div>
+                    <div class="gauge-card">
+                        <div class="gauge-label">距离 (米)</div>
+                        <div class="gauge-value" id="distanceValue">--</div>
+                    </div>
+                    <div class="gauge-card">
+                        <div class="gauge-label">车速 (km/h)</div>
+                        <div class="gauge-value" id="speedValue">60.0</div>
+                    </div>
+                    <div class="gauge-card">
+                        <div class="gauge-label">系统状态</div>
+                        <div class="gauge-value status-safe" id="statusValue">🟢 SAFE</div>
+                    </div>
+                </div>
+
+                <!-- TTC 公式说明 -->
+                <div class="ttc-info">
+                    <strong>TTC = 距离 / 相对速度</strong> &nbsp;
+                    TTC≥2s: <span style="color:#22c55e">安全</span> &nbsp;
+                    1≤TTC&lt;2s: <span style="color:#eab308">预警</span> &nbsp;
+                    TTC&lt;1s: <span style="color:#ef4444">紧急制动</span>
+                </div>
+
+                <!-- 车辆运动动画 (视频播放时实时更新) -->
+                <div class="car-animation" id="carAnimation">
+                    <div class="road">
+                        <div class="lane-marker"></div>
+                        <div class="ego-car" id="egoCar">🚗 自车</div>
+                        <div class="target-car" id="targetCar">🚙 前车</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== 右侧: 实时曲线 ===== -->
+            <div class="right-panel">
+                <div class="chart-card">
+                    <h3>距离 - 时间</h3>
+                    <canvas id="chartDistance"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3>TTC - 时间</h3>
+                    <canvas id="chartTTC"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3>车速 - 时间</h3>
+                    <canvas id="chartSpeed"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3>制动信号</h3>
+                    <canvas id="chartBrake"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======== 底部: 制动仿真 (完全独立, 对标MATLAB) ======== -->
+        <div class="sim-panel">
+            <h2>制动仿真 - 车辆动力学模型 (独立于视频)</h2>
+
+            <!-- 可调参数 + 公式 -->
+            <div class="formula-box">
+                <div class="formula-title">可调参数</div>
+                <div class="param-grid">
+                    <div class="param-item"><label>初速 v0</label><input type="range" id="simSpeed" min="10" max="150" value="60" step="5"><span id="simSpeedValue">60 km/h</span></div>
+                    <div class="param-item"><label>制动触发</label><input type="range" id="simBrakeT" min="0.3" max="6.0" value="2.0" step="0.1"><span id="simBrakeTValue">2.0 s</span></div>
+                    <div class="param-item"><label>车重 m</label><input type="range" id="simMass" min="800" max="3000" value="1500" step="100"><span id="simMassValue">1500 kg</span></div>
+                    <div class="param-item"><label>摩擦系数 μ</label><input type="range" id="simFriction" min="0.2" max="1.0" value="0.8" step="0.05"><span id="simFrictionValue">0.80</span></div>
+                </div>
+                <div class="formula-title" style="margin-top:10px;">运动学与动力学公式</div>
+                <div class="formula-grid">
+                    <div class="formula-item"><span class="formula-label">制动减速度:</span><span class="formula">a = μg</span></div>
+                    <div class="formula-item"><span class="formula-label">理想刹车距离:</span><span class="formula">d = v<sub>0</sub>²/(2μg)</span></div>
+                    <div class="formula-item"><span class="formula-label">速度公式:</span><span class="formula">v(t) = v<sub>0</sub> − at</span></div>
+                    <div class="formula-item"><span class="formula-label">位移公式:</span><span class="formula">s(t) = v<sub>0</sub>t − ½at²</span></div>
+                    <div class="formula-item"><span class="formula-label">动能:</span><span class="formula">E<sub>k</sub> = ½mv²</span></div>
+                    <div class="formula-item"><span class="formula-label">摩擦功:</span><span class="formula">W = μmg·d</span></div>
+                    <div class="formula-item"><span class="formula-label">制动响应时间:</span><span class="formula">t<sub>delay</sub> = 0.3s</span></div>
+                    <div class="formula-item"><span class="formula-label">制动力:</span><span class="formula">F<sub>brake</sub>=signal×m×μ×g</span></div>
+                    <div class="formula-item"><span class="formula-label">滚动阻力:</span><span class="formula">F<sub>roll</sub>=C<sub>r</sub>mg</span></div>
+                    <div class="formula-item"><span class="formula-label">空气阻力:</span><span class="formula">F<sub>drag</sub>=½ρC<sub>d</sub>Av²</span></div>
+                    <div class="formula-item"><span class="formula-label">总减速度:</span><span class="formula">a = ΣF/m</span></div>
+                </div>
+            </div>
+
+            <!-- 分析模式按钮 -->
+            <div class="sim-buttons">
+                <button class="btn btn-warning active" data-mode="single" id="btnModeSingle">▶ 单次仿真</button>
+                <button class="btn btn-secondary" data-mode="speeds" id="btnModeSpeeds">📈 多速度对比</button>
+                <button class="btn btn-secondary" data-mode="scenarios" id="btnModeScenarios">🌦 环境场景</button>
+                <button class="btn btn-secondary" data-mode="distance" id="btnModeDistance">📏 刹车距离分析</button>
+                <button class="btn btn-secondary" data-mode="decel" id="btnModeDecel">🛑 减速度对比</button>
+            </div>
+
+            <!-- 结果摘要 -->
+            <div class="sim-summary" id="simSummary">
+                刹停时间: <strong id="simStopTime">--</strong>s |
+                刹停距离: <strong id="simStopDist">--</strong>m |
+                最大减速度: <strong id="simMaxDecel">--</strong> m/s² |
+                当前模式: <strong id="simModeLabel">单次仿真</strong>
+            </div>
+
+            <!-- 图表区 (4图, 标题随模式切换) -->
+            <div class="sim-charts" id="simCharts">
+                <div class="chart-card"><h4 id="simTitle1">车速变化</h4><canvas id="chartSim1"></canvas></div>
+                <div class="chart-card"><h4 id="simTitle2">减速度</h4><canvas id="chartSim2"></canvas></div>
+            </div>
+            <div class="sim-charts" id="simCharts2" style="grid-template-columns: 1fr 1fr; margin-top:10px;">
+                <div class="chart-card"><h4 id="simTitle3">对比图</h4><canvas id="chartSim3"></canvas></div>
+                <div class="chart-card"><h4 id="simTitle4">分析图</h4><canvas id="chartSim4"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

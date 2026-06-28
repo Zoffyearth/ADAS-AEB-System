@@ -1,0 +1,56 @@
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+*.egg
+dist/
+build/
+*.spec
+
+# === 虚拟环境 ===
+adas_aeb_env/
+venv/
+env/
+ENV/
+
+# === 模型权重文件 ===
+yolov8n.pt
+*.pt
+*.pth
+*.weights
+
+# === IDE 配置 ===
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# === 系统文件 ===
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# === 数据文件（运行生成的） ===
+adas_aeb_project/data/output/
+adas_aeb_project/data/uploaded.mp4
+adas_aeb_project/data/*.mp4
+adas_aeb_project/data/*.avi
+*.mp4
+*.avi
+*.mov
+
+# === 文档（不提交） ===
+docs/
+adas_aeb_project/README.md
+
+# === MATLAB 生成文件 ===
+*.slx.autosave
+*.asv
+simulation_results/
+
+# === 日志 ===
+*.log
+logs/
